@@ -3,6 +3,10 @@ name: ci
 on:  # yamllint disable-line rule:truthy
   - push
 
+env:
+  AWS_DEFAULT_REGION: us-west-2
+  AWS_EC2_METADATA_DISABLED: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
