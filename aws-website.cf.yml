@@ -1,0 +1,406 @@
+Description: '"cariad/aws-website" site'
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Domain
+        Parameters:
+          - DomainName
+          - HostedZoneId
+          - SiteId
+      - Label:
+          default: Caching
+        Parameters:
+          - DefaultTTL
+    ParameterLabels:
+      DomainName:
+        default: Domain Name
+      HostedZoneId:
+        default: Hosted Zone ID
+      SiteId:
+        default: Site ID
+      DefaultTTL:
+        default: Default TTL (seconds)
+
+Parameters:
+  DomainName:
+    AllowedPattern: ^(?!www.).+$
+    Description:
+      Do not include the "www." subdomain. For example, "getcodelove.com" and
+      not "www.getcodelove.com".
+    Type: String
+
+  HostedZoneId:
+    Description: Must match the domain name entered above.
+    Type: AWS::Route53::HostedZone::Id
+
+  SiteId:
+    AllowedPattern: "[a-z]+"
+    Description:
+      A short, unique code for this website. Lower-case letters only For
+      example, "getcodelovecom".
+    Type: String
+
+  DefaultTTL:
+    Description:
+      Maximum seconds between uploading a file and it becoming downloadable.
+      Shorter caches publish updates sooner, but are less efficient. Must be
+      between "60" and "31536000". Try "60" (1 min) while developing, "300" (5
+      mins) for blogs, or "3600" (1 hour) or more if immediacy isn't critical.
+      This default can be overridden per-file with tools like
+      https://github.com/cariad/s3headersetter.
+    Default: 3600
+    Type: Number
+
+Resources:
+
+  # CERTIFICATE ################################################################
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName:
+        Ref: DomainName
+      DomainValidationOptions:
+        - DomainName:
+            Ref: DomainName
+          HostedZoneId:
+            Ref: HostedZoneId
+      SubjectAlternativeNames:
+        - Fn::Sub: "*.${DomainName}"
+      ValidationMethod: DNS
+
+  # CLOUDFRONT #################################################################
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment:
+          Fn::Sub: Deployed by cariad/????????????????? for ${DomainName}
+
+  CachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        DefaultTTL:
+          Ref: DefaultTTL
+        MaxTTL: 31536000
+        MinTTL: 60
+        Name:
+          Ref: SiteId
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            # Allow cachebusting via query strings (i.e. "style.css?v2" to
+            # ignore the cached "style.css" and get the latest content).
+            QueryStringBehavior: all
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - Ref: DomainName
+          - Fn::Sub: www.${DomainName}
+        Comment:
+          Fn::Sub: Deployed by cariad/?????????????????? for ${DomainName}
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachePolicyId:
+            Ref: CachePolicy
+          Compress: true
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              LambdaFunctionARN:
+                Ref: OriginRequestHandlerVersion
+            - EventType: origin-response
+              LambdaFunctionARN:
+                Ref: OriginResponseHandlerVersion
+            - EventType: viewer-request
+              LambdaFunctionARN:
+                Ref: ViewerRequestHandlerVersion
+          TargetOriginId: website
+          ViewerProtocolPolicy: redirect-to-https
+
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+          - DomainName:
+              Fn::Sub: ${Bucket}.s3.us-east-1.amazonaws.com
+            Id: website
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Sub: origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn:
+            Ref: Certificate
+          MinimumProtocolVersion: TLSv1.2_2019
+          SslSupportMethod: sni-only
+
+  # IAM ROLES ##################################################################
+
+  EdgeHandler:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - edgelambda.amazonaws.com
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: AllowLogging
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource:
+                  Fn::Sub: arn:aws:logs:*:${AWS::AccountId}:log-group:*
+
+  # IAM USERS ##################################################################
+
+  Publisher:
+    Type: AWS::IAM::User
+    Properties:
+      Policies:
+        - PolicyName: Publish
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action: s3:ListBucket
+                Effect: Allow
+                Resource:
+                  Fn::Sub: arn:aws:s3:::${Bucket}
+              - Action:
+                  - s3:DeleteObject
+                  - s3:PutObject
+                Effect: Allow
+                Resource:
+                  Fn::Sub: arn:aws:s3:::${Bucket}/*
+
+  # LAMBDA FUNCTIONS ###########################################################
+
+  OriginRequestHandler:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          'use strict';
+          exports.handler = async (event) => {
+              const request = event.Records[0].cf.request;
+              if (request.uri.endsWith('/')) {
+                request.uri += 'index.html';
+                return request;
+              }
+              const requestUriParts = request.uri.split('/');
+              const leaf = requestUriParts[requestUriParts.length - 1];
+              if (leaf.includes('.'))
+                return request;
+              return {
+                'status': 301,
+                'headers': {
+                  'location': [{
+                    key: 'Location',
+                    value: request.uri + '/'
+                  }]
+                }
+              }
+          };
+      Description: Handles the origin-request CloudFront event
+      Handler: index.handler
+      MemorySize: 128
+      Role:
+        Fn::Sub: ${EdgeHandler.Arn}
+      Runtime: nodejs12.x
+      Timeout: 1
+
+  OriginResponseHandler:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          'use strict';
+          exports.handler = async (event) => {
+            const response = event.Records[0].cf.response;
+            var addHeader = (header, value) => {
+              response.headers[header.toLowerCase()] = [{
+                key: header,
+                value: value
+              }];
+            };
+            addHeader(
+              'Strict-Transport-Security',
+              'max-age=31536000; includeSubdomains; preload'
+            );
+            addHeader('X-Content-Type-Options', 'nosniff');
+            return response;
+          };
+      Description: Handles the origin-response CloudFront event
+      Handler: index.handler
+      MemorySize: 128
+      Role:
+        Fn::Sub: ${EdgeHandler.Arn}
+      Runtime: nodejs12.x
+      Timeout: 1
+
+  ViewerRequestHandler:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          'use strict';
+          exports.handler = async (event) => {
+            const request = event.Records[0].cf.request;
+            const host = request.headers.host[0].value;
+            if (host.startsWith('www.')) {
+              const newHost = host.substring(4);
+              const newUri = 'https://' + newHost + request.uri;
+              return {
+                'status': 301,
+                'headers': {
+                  'location': [{
+                    key: 'Location',
+                    value: newUri
+                  }]
+                }
+              };
+            }
+            return request;
+          };
+      Description: Handles the viewer-request CloudFront event
+      Handler: index.handler
+      MemorySize: 128
+      Role:
+        Fn::Sub: ${EdgeHandler.Arn}
+      Runtime: nodejs12.x
+      Timeout: 1
+
+  # LAMBDA FUNCTION VERSIONS ###################################################
+
+  OriginRequestHandlerVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName:
+        Ref: OriginRequestHandler
+
+  OriginResponseHandlerVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName:
+        Ref: OriginResponseHandler
+
+  ViewerRequestHandlerVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName:
+        Ref: ViewerRequestHandler
+
+  # S3 #########################################################################
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      WebsiteConfiguration:
+        ErrorDocument: 404/index.html
+        IndexDocument: index.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: Bucket
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Sub:
+                  arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
+                  ${CloudFrontOriginAccessIdentity}
+            Resource:
+              Fn::Sub: arn:aws:s3:::${Bucket}/*
+
+          - Action: s3:ListBucket
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Sub: ${Publisher.Arn}
+            Resource:
+              Fn::Sub: arn:aws:s3:::${Bucket}
+
+          - Action:
+              - s3:DeleteObject
+              - s3:PutObject
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Sub: ${Publisher.Arn}
+            Resource:
+              Fn::Sub: arn:aws:s3:::${Bucket}/*
+
+  # ROUTE53 ####################################################################
+
+  RootRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        HostedZoneId: Z2FDTNDATAQYW2
+        DNSName:
+          Fn::Sub: ${CloudFrontDistribution.DomainName}
+      HostedZoneId:
+        Ref: HostedZoneId
+      Name:
+        Ref: DomainName
+      Type: A
+
+  WWWRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        HostedZoneId: Z2FDTNDATAQYW2
+        DNSName:
+          Fn::Sub: ${CloudFrontDistribution.DomainName}
+      HostedZoneId:
+        Ref: HostedZoneId
+      Name:
+        Fn::Sub: www.${DomainName}
+      Type: A
+
+
+Outputs:
+  Bucket:
+    Description: S3 bucket to host the site
+    Value:
+      Ref: Bucket
+
+  Publisher:
+    Description: IAM user with permission to publish to the host bucket
+    Value:
+      Ref: Publisher

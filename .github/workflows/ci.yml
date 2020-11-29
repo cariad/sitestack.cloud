@@ -1,0 +1,37 @@
+name: ci
+
+on:  # yamllint disable-line rule:truthy
+  - push
+
+env:
+  AWS_DEFAULT_REGION: us-west-2
+  AWS_EC2_METADATA_DISABLED: true
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-20.04
+    container: cariad/ci:1.0.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pipenv sync --dev
+
+      - name: Validate
+        run: pipenv run ./validate.sh
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags')
+    needs:
+      - validate
+    runs-on: ubuntu-20.04
+    container: cariad/ci:1.0.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Publish
+        run: ./publish
