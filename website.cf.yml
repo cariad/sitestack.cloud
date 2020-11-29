@@ -1,4 +1,4 @@
-Description: '"cariad/aws-website" site'
+Description: '"cariad/aws-website" site (__VERSION__)'
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -78,7 +78,7 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment:
-          Fn::Sub: Deployed by cariad/????????????????? for ${DomainName}
+          Fn::Sub: Deployed by cariad/aws-website for ${DomainName}
 
   CachePolicy:
     Type: AWS::CloudFront::CachePolicy
@@ -110,7 +110,7 @@ Resources:
           - Ref: DomainName
           - Fn::Sub: www.${DomainName}
         Comment:
-          Fn::Sub: Deployed by cariad/?????????????????? for ${DomainName}
+          Fn::Sub: Deployed by cariad/aws-website for ${DomainName}
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
