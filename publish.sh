@@ -3,7 +3,7 @@
 version="${1:?}"
 local_path=website.cf.yml
 
-sed -i "s/__VERSION/${version:?}/" "${local_path:?}"
+sed -i "s/__VERSION__/${version:?}/" "${local_path:?}"
 
 s3_path="s3://cariad/aws-website"
 s3_latest="${s3_path:?}/latest.cf.yml"
