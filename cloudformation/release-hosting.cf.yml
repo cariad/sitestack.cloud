@@ -1,9 +1,6 @@
 Description: sitestack.cloud release hosting
 Resources:
-
-  # IAM USERS ##################################################################
-
-  Publisher:
+  CI:
     Type: AWS::IAM::User
     Properties:
       Policies:
@@ -22,8 +19,13 @@ Resources:
                 Effect: Allow
                 Resource:
                   Fn::Sub: arn:aws:s3:::${Bucket}/*
-
-  # S3 #########################################################################
+        - PolicyName: Validate
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action: cloudformation:ValidateTemplate
+                Effect: Allow
+                Resource: "*"
 
   Bucket:
     Type: AWS::S3::Bucket
