@@ -1,12 +1,12 @@
-# website-stack: Almost one-click static website hosting in Amazon Web Services
+# sitestack.cloud: Almost one-click static website hosting in Amazon Web Services
 
 **This is pre-release software.**
 
-Get started: [cariad.github.io/website-stack](https://cariad.github.io/website-stack/)
+Deploy your own stack at: [sitestack.cloud](https://sitestack.cloud)
 
 ## What is thia?
 
-[website-stack](https://cariad.github.io/website-stack/) will deploy a stack to host a static website in your Amazon Web Services account.
+[sitestack.cloud](https://sitestack.cloud) will deploy a stack to host a static website in your Amazon Web Services account.
 
 ## What exactly does it deploy?
 
