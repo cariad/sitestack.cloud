@@ -1,4 +1,4 @@
-Description: '"cariad/aws-website" site (__VERSION__)'
+Description: '"cariad/sitestack.cloud" site (__VERSION__)'
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -78,7 +78,7 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment:
-          Fn::Sub: Deployed by cariad/aws-website for ${DomainName}
+          Fn::Sub: Deployed by cariad/sitestack.cloud for ${DomainName}
 
   CachePolicy:
     Type: AWS::CloudFront::CachePolicy
@@ -110,7 +110,7 @@ Resources:
           - Ref: DomainName
           - Fn::Sub: www.${DomainName}
         Comment:
-          Fn::Sub: Deployed by cariad/aws-website for ${DomainName}
+          Fn::Sub: Deployed by cariad/sitestack.cloud for ${DomainName}
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
@@ -194,6 +194,7 @@ Resources:
                   Fn::Sub: arn:aws:s3:::${Bucket}
               - Action:
                   - s3:DeleteObject
+                  - s3:GetObject
                   - s3:PutObject
                 Effect: Allow
                 Resource:
@@ -327,7 +328,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       WebsiteConfiguration:
-        ErrorDocument: 404/index.html
+        ErrorDocument: error/index.html
         IndexDocument: index.html
 
   BucketPolicy:
@@ -344,24 +345,6 @@ Resources:
                 Fn::Sub:
                   arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
                   ${CloudFrontOriginAccessIdentity}
-            Resource:
-              Fn::Sub: arn:aws:s3:::${Bucket}/*
-
-          - Action: s3:ListBucket
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::Sub: ${Publisher.Arn}
-            Resource:
-              Fn::Sub: arn:aws:s3:::${Bucket}
-
-          - Action:
-              - s3:DeleteObject
-              - s3:PutObject
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::Sub: ${Publisher.Arn}
             Resource:
               Fn::Sub: arn:aws:s3:::${Bucket}/*
 
@@ -393,6 +376,7 @@ Resources:
         Fn::Sub: www.${DomainName}
       Type: A
 
+# OUTPUTS ######################################################################
 
 Outputs:
   Bucket:
