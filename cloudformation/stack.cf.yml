@@ -8,7 +8,6 @@ Metadata:
         Parameters:
           - DomainName
           - HostedZoneId
-          - SiteId
       - Label:
           default: Caching
         Parameters:
@@ -18,29 +17,18 @@ Metadata:
         default: Domain Name
       HostedZoneId:
         default: Hosted Zone ID
-      SiteId:
-        default: Site ID
       DefaultTTL:
         default: Default TTL (seconds)
 
 Parameters:
   DomainName:
     AllowedPattern: ^(?!www.).+$
-    Description:
-      Do not include the "www." subdomain. For example, "getcodelove.com" and
-      not "www.getcodelove.com".
+    Description: Do not include the "www." subdomain.
     Type: String
 
   HostedZoneId:
     Description: Must match the domain name entered above.
     Type: AWS::Route53::HostedZone::Id
-
-  SiteId:
-    AllowedPattern: "[a-z]+"
-    Description:
-      A short, unique code for this website. Lower-case letters only For
-      example, "getcodelovecom".
-    Type: String
 
   DefaultTTL:
     Description:
@@ -89,7 +77,7 @@ Resources:
         MaxTTL: 31536000
         MinTTL: 60
         Name:
-          Ref: SiteId
+          Fn::Sub: ${AWS::StackName}
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
