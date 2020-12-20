@@ -32,17 +32,23 @@ Deploy your own stack at: [sitestack.cloud](https://sitestack.cloud)
 
 ### First time
 
-Visit [cariad.github.io/website-stack](https://cariad.github.io/website-stack/) or click [Launch Stack](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://cariad.s3.eu-west-2.amazonaws.com/website-stack/latest.cf.yml).
+TODO.
 
-**Deployment could take ~20 minutes. Don't panic1**
+<!-- Visit [cariad.github.io/website-stack](https://cariad.github.io/website-stack/) or click [Launch Stack](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml). -->
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://cariad.s3.eu-west-2.amazonaws.com/website-stack/latest.cf.yml">
+**Deployment could take ~20 minutes. Don't panic!**
+
+TODO.
+
+<!-- <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml">
   <img src="docs/images/cloudformation-launch-stack-button-svg/launch-stack.svg">
-</a>
+</a> -->
 
 ### Redeploying
 
-Find the stack in the CloudFormation console, then click **Update Stack**. You can use the same stack again if you only want to change a value, or apply the updated template at `https://cariad.s3.eu-west-2.amazonaws.com/website-stack/latest.cf.yml` to pick up the latest and greatest changes.
+TODO.
+
+<!-- Find the stack in the CloudFormation console, then click **Update Stack**. You can use the same stack again if you only want to change a value, or apply the updated template at `https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml` to pick up the latest and greatest changes. -->
 
 ## Uploading files
 
@@ -75,5 +81,4 @@ CloudFront caches your files for some amount of time, so changes are not instant
 
 ## Thanks
 
-- Thanks, [HTML5 UP](https://html5up.net)! [Hyperspace](https://html5up.net/hyperspace) is used under the Creative Commons Attribution 3.0 License.
-- Thanks, [Buildkite](https://github.com/buildkite)! [buildkite/cloudformation-launch-stack-button-svg](https://github.com/buildkite/cloudformation-launch-stack-button-svg) is used under the MIT License.
+Thanks, [Buildkite](https://github.com/buildkite)! [buildkite/cloudformation-launch-stack-button-svg](https://github.com/buildkite/cloudformation-launch-stack-button-svg) is used under the MIT License.

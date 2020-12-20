@@ -1,4 +1,4 @@
-Description: '"cariad/website-stack" site (__VERSION__)'
+Description: '"cariad/sitestack.cloud" site (__VERSION__)'
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -78,7 +78,7 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment:
-          Fn::Sub: Deployed by cariad/website-stack for ${DomainName}
+          Fn::Sub: Deployed by cariad/sitestack.cloud for ${DomainName}
 
   CachePolicy:
     Type: AWS::CloudFront::CachePolicy
@@ -110,7 +110,7 @@ Resources:
           - Ref: DomainName
           - Fn::Sub: www.${DomainName}
         Comment:
-          Fn::Sub: Deployed by cariad/website-stack for ${DomainName}
+          Fn::Sub: Deployed by cariad/sitestack.cloud for ${DomainName}
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
@@ -328,7 +328,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       WebsiteConfiguration:
-        ErrorDocument: 404/index.html
+        ErrorDocument: error/index.html
         IndexDocument: index.html
 
   BucketPolicy:
