@@ -62,12 +62,20 @@ p {
   color: rgba(255,133,27,0.5);
 }
 
+code.error {
+  color: var(--red);
+  text-decoration-color: #FF851B;
+  text-decoration: underline;
+  text-decoration-line: solid;
+  text-decoration-thickness: 0.2rem;
+  text-underline-offset: 0.2rem;
+}
+
 code.path {
   background: rgba(17,17,17, 0.9);
   color: #01FF70;
   font-family: 'Source Code Pro', monospace;
   font-size: 1rem;
-  /* font-size: 0.9em; */
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   padding-left: 0.6em;
@@ -99,9 +107,6 @@ li {
 }
 
 .placeholder {
-  /* color: #FF4136; */
   font-family: 'Pacifico', cursive;
-  /* font-weight: 400; */
-  letter-spacing: 0.1rem;
-  font-size: 1.3rem;
+  letter-spacing: 0.15rem;
 }

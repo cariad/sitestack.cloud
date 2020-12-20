@@ -1,70 +1,67 @@
-# sitestack.cloud: Almost one-click static website hosting in Amazon Web Services
+# sitestack.cloud: \[Almost] one-click static website hosting in Amazon Web Services
 
 **This is pre-release software.**
 
-Deploy your own stack at: [sitestack.cloud](https://sitestack.cloud)
+A CloudFormation stack to host a static website in your Amazon Web Services account.
 
-## What is thia?
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml">
+  <img src="cloudformation-launch-stack-button-svg/launch-stack.svg" />
+</a>
 
-[sitestack.cloud](https://sitestack.cloud) will deploy a stack to host a static website in your Amazon Web Services account.
+<!-- Deploy your own stack at: [sitestack.cloud](https://sitestack.cloud) -->
 
-## What exactly does it deploy?
+## What does sitestack.cloud deploy?
 
-- An S3 bucket, for you to drop your website files into.
-- An IAM user with permission to upload files, for you to use in your deployment pipeline -- unless you want to drag files in manually, in which case _be my guest!_
-- A certificate to support HTTPS, and a lambda function to enforce HTTPS.
-- Route53 record sets to validate your certificate and direct visitors to your website.
-- A CloudFront distribution, to cache your website globally.
-- A lambda function to ensure that visitors requesting `foo.com/bar` are invisibly served `foo.com/bar/index.html`.
-- A lambda function to ensure that visitors requesting `www.foo.com` are redirected to `foo.com`.
-
-## What kinds of security are in place?
-
-- The S3 bucket is not publicly-accessible. Only the CloudFront distribution can read from it.
-- The stack deploys a certificate to support HTTPS, and a lambda function to enforce HTTPS.
-- The lambda functions have the minimum required access to your account. In fact, they have permission only to create logs.
-
-## Prerequisites
-
-- You must have a domain name registered, associated with a Hosted Zone in the same AWS account that you intend to deploy to, and not currently pointing to a website.
+- An **S3 bucket** to upload your website to.
+- A **certificate** to support HTTPS on your custom domain.
+- A HTTP/2, IPv6-enabled **CloudFront distribution** with:
+    - …a **CloudFront cache policy** with a configurable time-to-live, and allows cachebusting via query strings.
+    - …a **CloudFront origin access identity**, which allows the distribution to read your S3 bucket without the need to make it publicly readable.
+- **Route53 record sets** to make your website available at your custom domain.
+- A **publisher (IAM user)** for your tools and automated deployments.
+- An **origin-request Lambda@Edge function** to serve `index.html` when a directory is requested.
+- An **origin-response Lambda@Edge function** to add `Strict-Transport-Security` and `X-Content-Type-Options` headers for defensive HTTPS.
+- A **viewer-request Lamda@Edge function** to redirect visitors from `www.*` to your root domain.
 
 ## Deploying
 
-### First time
+See [sitestack.cloud](https://sitestack.cloud).
+First, make sure you have:
 
-TODO.
+- An Amazon Web Services account.
+- A domain name.
+- A Hosted Zone for your custom domain, in the same account you’ll be deploying to.
 
-<!-- Visit [cariad.github.io/website-stack](https://cariad.github.io/website-stack/) or click [Launch Stack](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml). -->
+To deploy the stack:
 
-**Deployment could take ~20 minutes. Don't panic!**
+1. Click <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml"><img src="cloudformation-launch-stack-button-svg/launch-stack.svg" /></a>
+1.
 
-TODO.
 
-<!-- <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml">
-  <img src="docs/images/cloudformation-launch-stack-button-svg/launch-stack.svg">
-</a> -->
 
-### Redeploying
+When you’re ready to publish your website, just upload it to the S3 bucket.
 
-TODO.
+<p>Use the AWS web console. Fire up the AWS CLI. Write your own scripts. Grab a beautiful app like <a href="https://panic.com/transmit/">Transmit</a>. We even deploy an IAM user for your automated deployments to authenticate as. The choice is yours.</p>
 
-<!-- Find the stack in the CloudFormation console, then click **Update Stack**. You can use the same stack again if you only want to change a value, or apply the updated template at `https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml` to pick up the latest and greatest changes. -->
+<h3>Custom domain name and HTTPS</h3>
 
-## Uploading files
+<p>As you’d expect, we’ll make your website available at <code class="url">https://<span class="placeholder">yourdomain.com</span></code>.</p>
 
-### Manually
+<p>Because we care about security, we’ll redirect <code class="url">http://<span class="placeholder">yourdomain.com</span></code> to <code class="url">http<span style="color: var(--red);">s</span>://<span class="placeholder">yourdomain.com</span></code>.</p>
 
-The name of your new S3 bucket will be shown in the **Outputs** tab, or you could browse for it in your S3 console. It'll be named something like `<Site ID>-bucket-<random characters>`.
+<p>And because we love when websites have canonical URLs, we’ll redirect <code class="url">www.<span class="placeholder">yourdomain.com</span></code> to <code class="url"><span class="placeholder">yourdomain.com</span></code> too.
 
-Open that bucket in the S3 console then upload your files.
+<h3>Beautiful directory handling</h3>
 
-### In a deployment pipeline
+<p>Say you want your contact details published at <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code>.</p>
 
-An IAM user was created for you to support automated deployments:
+<p>To achieve that, you’ll need the directory structure <code class="path">…/contact/index.html</code>.</p>
 
-1. Find the username in the **Outputs** tab.
-1. Find and open the user in the IAM console.
+<p>Traditional web servers will assume that any visitors requesting the <code class="path">contact</code> directory should <em>really</em> be served the <code class="path">index.html</code> file within.</p>
 
+<p>But S3 isn’t a traditional web server. It's a literal key/value store. Your visitors would need to hit <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact/index.html</code>. And that’s just ugly.</p>
+
+<p>So, we deploy Lambda@Edge functions to make <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code> beautiful.</p>
 
 ## Help!
 
@@ -75,8 +72,6 @@ The domain name records will take some time to propagate after the deployment. I
 ### I uploaded some files, but my website still has the old versions!
 
 CloudFront caches your files for some amount of time, so changes are not instantaneous. The duration will depend on the `DefaultTTL` you entered during the deployment. If the duration is too long for your tastes
-
-
 
 
 ## Thanks

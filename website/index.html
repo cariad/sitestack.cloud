@@ -12,7 +12,7 @@
         <p>sitestack.cloud</p>
       </header>
       <p>
-        <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml">
+        <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml">
           <img src="cloudformation-launch-stack-button-svg/launch-stack.svg" />
         </a>
       </p>
@@ -25,7 +25,7 @@
 
       <p>When you’re ready to publish your website, just upload it to the S3 bucket we deploy for you.</p>
 
-      <p>Use the AWS web console. Fire up the AWS CLI. Write your own scripts. Grab a beautiful app like <a href="https://panic.com/transmit/">Transmit</a>. We even deploy an IAM Role for your automated deployments to assume. The choice is yours.</p>
+      <p>Use the AWS web console. Fire up the AWS CLI. Write your own scripts. Grab a beautiful app like <a href="https://panic.com/transmit/">Transmit</a>. We even deploy an IAM user for your automated deployments to authenticate as. The choice is yours.</p>
 
       <h3>Custom domain name and HTTPS</h3>
 
@@ -58,13 +58,39 @@
 
       <h2>Deploying</h2>
 
-      <p>TODO.</p>
-
-      <!-- <p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml"><img src="cloudformation-launch-stack-button-svg/launch-stack.svg" /></a></p>
+      <p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml"><img src="cloudformation-launch-stack-button-svg/launch-stack.svg" /></a></p>
 
       <ol>
         <li>Click <em>Launch Stack</em>.</li>
-      </ol> -->
+        <li>
+          Configure the stack:
+          <ul>
+            <li><span class="label">Stack name:</span> Enter a name for this stack. The name won’t affect your website at all, but you’ll need to remember this name if you ever want to delete the stack. <em>I like to use the domain name without any punctuation marks, so “sitestackcloud” for the website “sitestack.cloud”.</em></li>
+            <li><span class="label">Domain name:</span> Domain name for the website to deploy. Do not include “www.” on the front. <em>For example, “sitestack.cloud”.</em></li>
+            <li><span class="label">Hosted Zone ID:</span> Click and select the Hosted Zone for the domain you entered above.</li>
+          </ul>
+        </li>
+        <li>Click <span class="label">Create stack</span>.</li>
+        <li></li>
+        <li></li>
+      </ol>
+
+      <h2>FAQs</h2>
+
+      <h3>How much does this cost?</h3>
+
+      <p><span class="sitestack">sitestack.cloud</span> is provided as a free service; you only pay for your own Amazon Web Services costs.</p>
+
+      <p>AWS charges by usage, which makes cost estimation tricky. Personally, I'm paying pennies per month to host half a dozen low-traffic sites.</p>
+
+      <h3>How do I delete everything that this stack deployed?</h3>
+
+      <ol>
+        <li>Log into your AWS account.</li>
+        <li>Open your S3 bucket and delete all the files. <em>The bucket must be empty before continuing.</em></li>
+        <li>Find the CloudFormation stack and delete it.</li>
+        <li>If the deletion fails with the error <code class="error">Lambda was unable to delete arn:aws:lambda:us-east-1:<span class="placeholder">youraccount</span>:function:sitestackcloud-ViewerRequestHandler because it is a replicated function.</code> then go get a cup of coffee, watch Disney's <em>Tomorrowland: A World Beyond</em>, then try again. Replicated functions can take a couple of hours to become deletable after their parent CloudFront distribution has evaporated.</li>
+      </ol>
 
     </div>
   </body>
