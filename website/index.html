@@ -1,210 +1,71 @@
-<!DOCTYPE HTML>
-<!--
-	Hyperspace by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>website-stack: Almost one-click static website hosting in Amazon Web Services</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <title>sitestack.cloud: </title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="content">
+      <header>
+        <h1><span class="almost">Almost</span> one-click static website hosting in Amazon Web Services</h1>
+        <p>sitestack.cloud</p>
+      </header>
+      <p>
+        <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml">
+          <img src="cloudformation-launch-stack-button-svg/launch-stack.svg" />
+        </a>
+      </p>
 
-		<!-- Sidebar -->
-			<section id="sidebar">
-				<div class="inner">
-					<nav>
-						<ul>
-							<li><a href="#intro">Launch</a></li>
-							<li><a href="#what">What?</a></li>
-							<!-- <li><a href="#two">What we do</a></li>
-							<li><a href="#three">Get in touch</a></li> -->
-						</ul>
-					</nav>
-				</div>
-			</section>
+      <p><span class="sitestack">sitestack.cloud</span> is a CloudFormation template for deploying static site hosting in Amazon Web Services.</p>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+      <h2>What does sitestack.cloud deploy?</h2>
 
-        <section id="intro" class="wrapper style1 fullscreen fade-up">
-          <div class="inner">
-            <h1>One-click static website hosting in Amazon Web Services</h1>
-            <p>Well, <i>almost</i> one-click.</p>
-            <p>
-              <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://cariad.s3.eu-west-2.amazonaws.com/website-stack/latest.cf.yml"
-                style="border: none;">
-                <img src="images/launch-stack.svg">
-              </a>
-            </p>
-            <ul class="actions">
-              <li><a href="#what" class="button scrolly">What is this?</a></li>
-            </ul>
-          </div>
-        </section>
+      <h3>S3 bucket</h3>
 
+      <p>When you’re ready to publish your website, just upload it to the S3 bucket we deploy for you.</p>
 
-					<!-- <section id="what" class="wrapper style2 spotlights">
-						<section>
-							<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Sed ipsum dolor</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Feugiat consequat</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Ultricies aliquam</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-					</section> -->
+      <p>Use the AWS web console. Fire up the AWS CLI. Write your own scripts. Grab a beautiful app like <a href="https://panic.com/transmit/">Transmit</a>. We even deploy an IAM Role for your automated deployments to assume. The choice is yours.</p>
 
+      <h3>Custom domain name and HTTPS</h3>
 
-					<section id="what" class="wrapper style3 fade-up">
-						<div class="inner">
-							<h2>What is this?</h2>
-							<p><code>TODO: Documentation goes here.</code></p>
-							<!-- <div class="features">
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Lorem ipsum amet</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-lock"></span>
-									<h3>Aliquam sed nullam</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-cog"></span>
-									<h3>Sed erat ullam corper</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-desktop"></span>
-									<h3>Veroeros quis lorem</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-link"></span>
-									<h3>Urna quis bibendum</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon major fa-gem"></span>
-									<h3>Aliquam urna dapibus</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-							</div> -->
-						</div>
-					</section>
+      <p>As you’d expect, we’ll make your website available at <code class="url">https://<span class="placeholder">yourdomain.com</span></code>.</p>
 
+      <p>Because we care about security, we’ll redirect <code class="url">http://<span class="placeholder">yourdomain.com</span></code> to <code class="url">http<span style="color: var(--red);">s</span>://<span class="placeholder">yourdomain.com</span></code>.</p>
 
-					<!-- <section id="three" class="wrapper style1 fade-up">
-						<div class="inner">
-							<h2>Get in touch</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
-							<div class="split style1">
-								<section>
-									<form method="post" action="#">
-										<div class="fields">
-											<div class="field half">
-												<label for="name">Name</label>
-												<input type="text" name="name" id="name" />
-											</div>
-											<div class="field half">
-												<label for="email">Email</label>
-												<input type="text" name="email" id="email" />
-											</div>
-											<div class="field">
-												<label for="message">Message</label>
-												<textarea name="message" id="message" rows="5"></textarea>
-											</div>
-										</div>
-										<ul class="actions">
-											<li><a href="" class="button submit">Send Message</a></li>
-										</ul>
-									</form>
-								</section>
-								<section>
-									<ul class="contact">
-										<li>
-											<h3>Address</h3>
-											<span>12345 Somewhere Road #654<br />
-											Nashville, TN 00000-0000<br />
-											USA</span>
-										</li>
-										<li>
-											<h3>Email</h3>
-											<a href="#">user@untitled.tld</a>
-										</li>
-										<li>
-											<h3>Phone</h3>
-											<span>(000) 000-0000</span>
-										</li>
-										<li>
-											<h3>Social</h3>
-											<ul class="icons">
-												<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-												<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-											</ul>
-										</li>
-									</ul>
-								</section>
-							</div>
-						</div>
-					</section> -->
+      <p>And because we love when websites have canonical URLs, we’ll redirect <code class="url">www.<span class="placeholder">yourdomain.com</span></code> to <code class="url"><span class="placeholder">yourdomain.com</span></code> too.
 
-			</div>
+      <h3>Beautiful directory handling</h3>
 
-		<!-- Footer -->
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</div>
-			</footer>
+      <p>Say you want your contact details published at <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code>.</p>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+      <p>To achieve that, you’ll need the directory structure <code class="path">…/contact/index.html</code>.</p>
 
-	</body>
+      <p>Traditional web servers will assume that any visitors requesting the <code class="path">contact</code> directory should <em>really</em> be served the <code class="path">index.html</code> file within.</p>
+
+      <p>But S3 isn’t a traditional web server. It's a literal key/value store. Your visitors would need to hit <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact/index.html</code>. And that’s just ugly.</p>
+
+      <p>So, we deploy Lambda@Edge functions to make <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code> beautiful.</p>
+
+      <h2>Requirements</h2>
+
+      <ul>
+        <li>An Amazon Web Services account.</li>
+        <li>A Hosted Zone for the domain name.</li>
+        <li>You must deploy the stack to the same AWS account as the Hosted Zone.</li>
+        <li>You must deploy the stack to <code>us-east-1</code>.</li>
+      </ul>
+
+      <h2>Deploying</h2>
+
+      <p>TODO.</p>
+
+      <!-- <p><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://releases.sitestack.cloud.s3.eu-west-2.amazonaws.com/latest.cf.yml"><img src="cloudformation-launch-stack-button-svg/launch-stack.svg" /></a></p>
+
+      <ol>
+        <li>Click <em>Launch Stack</em>.</li>
+      </ol> -->
+
+    </div>
+  </body>
 </html>
