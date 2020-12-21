@@ -144,27 +144,29 @@ li {
   font-weight: bold;
 }
 
-.columns {
-  column-count: 2;
-  column-width: 50%;
-  column-gap: 4rem;
-  padding: 0;
-}
-
-.columns > * {
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-.column-break {
-  break-after: column;
-}
-
-.columns h3:first-child,
-.column-break+h3 {
-  margin-top: 0;
-}
-
 h3+p {
   margin-top: calc(var(--para-spacing)/2);
+}
+
+@media (min-width: 800px) {
+  .columns {
+    column-count: 2;
+    column-width: 50%;
+    column-gap: 4rem;
+    padding: 0;
+  }
+
+  .columns > * {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .column-break {
+    break-after: column;
+  }
+
+  .columns h3:first-child,
+  .column-break+h3 {
+    margin-top: 0;
+  }
 }
