@@ -23,16 +23,6 @@
 
 Click **Launch Stack** to jump directly into the stack deployment, or read the guide at [sitestack.cloud](https://sitestack.cloud).
 
-## Help!
-
-### I uploaded some files, but my browser says my site "can't be found"!
-
-The domain name records will take some time to propagate after the deployment. It could be minutes, or it could be hours. Chill, my friend.
-
-### I uploaded some files, but my website still has the old versions!
-
-CloudFront caches your files for some amount of time, so changes are not instantaneous. The duration will depend on the `DefaultTTL` you entered during the deployment. If the duration is too long for your tastes
-
 ## Thanks
 
 Thanks, [Buildkite](https://github.com/buildkite)! [buildkite/cloudformation-launch-stack-button-svg](https://github.com/buildkite/cloudformation-launch-stack-button-svg) is used under the MIT License.

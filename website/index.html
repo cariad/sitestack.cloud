@@ -9,43 +9,61 @@
     <div id="content">
       <header>
         <h1><span class="almost">Almost</span> one-click static website hosting in Amazon Web Services</h1>
-        <p>sitestack.cloud</p>
       </header>
+
+      <div class="video-wrapper">
+        <iframe width="560"
+                height="315"
+                src="https://www.youtube.com/embed/syAJqV4owks"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+
+      <p><span class="sitestack">sitestack.cloud</span> deploys static site hosting in your Amazon Web Services account.</p>
+
+      <p>Grab the code from <a href="https://github.com/cariad/sitestack.cloud">github.com/cariad/sitestack.cloud</a>, or smash the <em>Launch Stack</em> button to get started.</p>
+
       <p>
         <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml">
           <img src="cloudformation-launch-stack-button-svg/launch-stack.svg" />
         </a>
       </p>
 
-      <p><span class="sitestack">sitestack.cloud</span> is a CloudFormation template for deploying static site hosting in Amazon Web Services.</p>
-
       <h2>What does sitestack.cloud deploy?</h2>
 
-      <h3>S3 bucket</h3>
+      <div class="columns">
 
-      <p>When you’re ready to publish your website, just upload it to the S3 bucket we deploy for you.</p>
+        <h3>S3 bucket</h3>
 
-      <p>Use the AWS web console. Fire up the AWS CLI. Write your own scripts. Grab a beautiful app like <a href="https://panic.com/transmit/">Transmit</a>. We even deploy an IAM user for your automated deployments to authenticate as. The choice is yours.</p>
+        <p>When you’re ready to publish, just upload to your website’s S3 bucket.</p>
 
-      <h3>Custom domain name and HTTPS</h3>
+        <p>We even include an IAM user with minimal permissions for your automated deployments.</p>
 
-      <p>As you’d expect, we’ll make your website available at <code class="url">https://<span class="placeholder">yourdomain.com</span></code>.</p>
+        <h3>Custom domain name and HTTPS</h3>
 
-      <p>Because we care about security, we’ll redirect <code class="url">http://<span class="placeholder">yourdomain.com</span></code> to <code class="url">http<span style="color: var(--red);">s</span>://<span class="placeholder">yourdomain.com</span></code>.</p>
+        <p>As you’d expect, we make your website available at <code class="url">https://<span class="placeholder">yourdomain.com</span></code>.</p>
 
-      <p>And because we love when websites have canonical URLs, we’ll redirect <code class="url">www.<span class="placeholder">yourdomain.com</span></code> to <code class="url"><span class="placeholder">yourdomain.com</span></code> too.
+        <p>We care about security, so we redirect <code class="url">http://</code> to <code class="url">http<span style="color: var(--red);">s</span>://</code>.</p>
 
-      <h3>Beautiful directory handling</h3>
+        <p>And we love when websites have canonical URLs, so we redirect <code class="url">www.<span class="placeholder">yourdomain.com</span></code> to <code class="url"><span class="placeholder">yourdomain.com</span></code> too.
 
-      <p>Say you want your contact details published at <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code>.</p>
+        <div class="column-break"></div>
 
-      <p>To achieve that, you’ll need the directory structure <code class="path">…/contact/index.html</code>.</p>
+        <h3>Beautiful directory handling</h3>
 
-      <p>Traditional web servers will assume that any visitors requesting the <code class="path">contact</code> directory should <em>really</em> be served the <code class="path">index.html</code> file within.</p>
+        <p>Say you want your contact details published at <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code>.</p>
 
-      <p>But S3 isn’t a traditional web server. It's a literal key/value store. Your visitors would need to hit <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact/index.html</code>. And that’s just ugly.</p>
+        <p>To achieve that, you’ll need the directory structure <code class="path">…/contact/index.html</code>.</p>
 
-      <p>So, we deploy Lambda@Edge functions to make <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code> beautiful.</p>
+        <p>Traditional web servers will assume that any visitors requesting the <code class="path">contact</code> directory should <em>really</em> be served the <code class="path">index.html</code> file within.</p>
+
+        <p>But S3 isn’t a traditional web server. It’s a literal key/value store. Your visitors would need to hit <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact/index.html</code>. And that’s just ugly.</p>
+
+        <p>So, we deploy Lambda@Edge functions to make <code class="url">https://<span class="placeholder">yourdomain.com</span>/contact</code> beautiful.</p>
+
+      </div>
+
 
       <h2>Requirements</h2>
 
@@ -65,32 +83,82 @@
         <li>
           Configure the stack:
           <ul>
-            <li><span class="label">Stack name:</span> Enter a name for this stack. The name won’t affect your website at all, but you’ll need to remember this name if you ever want to delete the stack. <em>I like to use the domain name without any punctuation marks, so “sitestackcloud” for the website “sitestack.cloud”.</em></li>
-            <li><span class="label">Domain name:</span> Domain name for the website to deploy. Do not include “www.” on the front. <em>For example, “sitestack.cloud”.</em></li>
-            <li><span class="label">Hosted Zone ID:</span> Click and select the Hosted Zone for the domain you entered above.</li>
+            <li><span class="label">Stack name:</span> The name won’t affect your website at all, but you’ll need to find this stack later to update or delete it.</li>
+            <li><span class="label">Domain name:</span> Your custom domain. Don’t put “www.” on the front.</li>
+            <li><span class="label">Hosted Zone ID:</span> Click and select the Hosted Zone for your custom domain.</li>
+            <li><span class="label">Default TTL:</span> Your website will be cached in a global content delivery network, so changes to files won’t be immediately visible on the web. Enter here the number of seconds to cache your content for. Higher values are more efficient. Minimum 60 seconds.</li>
           </ul>
         </li>
         <li>Click <span class="label">Create stack</span>.</li>
-        <li></li>
-        <li></li>
+        <li>Wait approximately 20 minutes for the deployment to complete.</li>
+        <li>All done! Now you’re ready to upload your website.</li>
       </ol>
+
+      <h2>Uploading your website</h2>
+
+      <h3>Uploading your website manually</h3>
+
+      <p>Log into your AWS account and find your website’s bucket. It’ll be called <code class="url"><span class="placeholder">stack</span>-bucket-<span class="placeholder">random</span></code>.</p>
+
+      <p>Drag-and-drop your files into the bucket, and you’re done!</p>
+
+      <h3>Uploading your website in a deployment pipeline</h3>
+
+      <p>Log into your AWS account and find your website’s publisher. It’ll be an IAM user named <code class="url"><span class="placeholder">stack</span>-Publisher-<span class="placeholder">random</span></code>.</p>
+
+      <p>Generate an access key/secret key pair, then use those credentials in your deployment pipeline to upload the website to the bucket.</p>
 
       <h2>FAQs</h2>
 
-      <h3>How much does this cost?</h3>
+      <div class="columns">
 
-      <p><span class="sitestack">sitestack.cloud</span> is provided as a free service; you only pay for your own Amazon Web Services costs.</p>
+        <h3>I uploaded some files, but my browser says my site “can’t be found”!</h3>
 
-      <p>AWS charges by usage, which makes cost estimation tricky. Personally, I'm paying pennies per month to host half a dozen low-traffic sites.</p>
+        <p>The domain name records will take some time to propagate after the deployment. It could be minutes, or it could be hours. Chill, my friend.</p>
 
-      <h3>How do I delete everything that this stack deployed?</h3>
+        <h3>I uploaded some files, but my website still has the old versions!</h3>
 
-      <ol>
-        <li>Log into your AWS account.</li>
-        <li>Open your S3 bucket and delete all the files. <em>The bucket must be empty before continuing.</em></li>
-        <li>Find the CloudFormation stack and delete it.</li>
-        <li>If the deletion fails with the error <code class="error">Lambda was unable to delete arn:aws:lambda:us-east-1:<span class="placeholder">youraccount</span>:function:sitestackcloud-ViewerRequestHandler because it is a replicated function.</code> then go get a cup of coffee, watch Disney's <em>Tomorrowland: A World Beyond</em>, then try again. Replicated functions can take a couple of hours to become deletable after their parent CloudFront distribution has evaporated.</li>
-      </ol>
+        <p>CloudFront caches your files for some amount of time, so changes are not instantaneous. The duration will depend on the <span class="label">Default TTL</span> you entered during the deployment. If the duration is too long for your tastes, you can change it.</p>
+
+        <h3>How do I change the “Default TTL”?</h3>
+
+        <ol>
+          <li>Log into your AWS account.</li>
+          <li>Open the CloudFormation console, and open your website’s stack.</li>
+          <li>Click <em>Update</em>.</li>
+          <li>Select <em>Use current template</em>.</li>
+          <li>Edit the <span class="label">Default TTL</span>.</li>
+          <li>Click <em>Next</em> through the wizard, then finally <em>Update stack</em>.</li>
+        </ol>
+
+        <div class="column-break"></div>
+
+        <h3>How can I change the HTTP headers returned for my files?</h3>
+
+        <p>Check out <a href="https://github.com/cariad/s3headersetter">s3headersetter</a>, my CLI tool for setting HTTP headers for S3 objects.</p>
+
+        <h3>How much does this cost?</h3>
+
+        <p><span class="sitestack">sitestack.cloud</span> is provided as a free service; you only pay for your own Amazon Web Services costs.</p>
+
+        <p>AWS charges by usage, which makes cost estimation tricky. Personally, I’m paying pennies per month to host half a dozen low-traffic sites.</p>
+
+        <h3>How do I delete everything that this stack deployed?</h3>
+
+        <ol>
+          <li>Log into your AWS account.</li>
+          <li>Open your S3 bucket and delete all the files. <em>The bucket must be empty before continuing.</em></li>
+          <li>Find the CloudFormation stack and delete it.</li>
+          <li>If the deletion fails with the error <code class="error">Lambda was unable to delete arn:aws:lambda:us-east-1:<span class="placeholder">youraccount</span>:function:sitestackcloud-ViewerRequestHandler because it is a replicated function.</code> then go get a cup of coffee, watch Disney’s <em>Tomorrowland: A World Beyond</em>, then try again. Replicated functions can take a couple of hours to become deletable after their parent CloudFront distribution has evaporated.</li>
+        </ol>
+      </div>
+
+      <h2>Who made this?</h2>
+
+      <p>Hi! I'm <a href="https://cariad.me">Cariad Eccleston</a>, and I'm a freelance DevOps engineer. I'm based in Exmouth in the United Kingdom, but I work globally.</p>
+      <p><span class="sitestack">sitestack.cloud</span> is a result of <em>years</em> of refining my infrastructure-as-code for Jekyll and Hugo-build static sites, and I hope it's useful to you folks too.</p>
+
+      <p>Thanks to <a href="https://github.com/buildkite">Buildkite</a>! <a href="https://github.com/buildkite/cloudformation-launch-stack-button-svg">buildkite/cloudformation-launch-stack-button-svg</a> is used under the MIT License. The source for <span class="sitestack">sitestack.cloud</span> is released under the MIT License at <a href="https://github.com/cariad/sitestack.cloud">github.com/cariad/sitestack.cloud</a>.</p>
 
     </div>
   </body>
