@@ -2,6 +2,8 @@
 
 **(Almost) one-click static website hosting in Amazon Web Services.**
 
+![](website/promo.gif)
+
 <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://s3.amazonaws.com/releases.sitestack.cloud/latest.cf.yml"><img src="website/cloudformation-launch-stack-button-svg/launch-stack.svg" /></a>
 
 ## What does sitestack.cloud deploy?
